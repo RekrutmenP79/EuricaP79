@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek Status Progres - PT Padepokan Tujuh Sembilan</title>
+    
+    <!-- FAVICON (Ikon Tab Browser) -->
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style> body { font-family: 'Inter', sans-serif; } </style>
@@ -38,6 +42,9 @@
         <div class="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-8 sm:p-10">
             
             <div class="text-center mb-6">
+                <div class="flex items-center justify-center mb-4">
+                    <img src="logo.jpg" alt="Logo PT Padepokan Tujuh Sembilan" class="h-14 w-auto object-contain" onerror="this.src='logo.png'">
+                </div>
                 <h1 class="text-2xl font-bold text-gray-900">Cek Status Progres Reference Check</h1>
                 <p class="text-sm text-gray-500 mt-1">Masukkan email yang Anda daftarkan untuk melihat status verifikasi terkini.</p>
             </div>
@@ -129,7 +136,7 @@
                     `;
                 }
             } catch (error) {
-                alertContainer.classList.remove('hidden');
+                alertContainer.classList.add('hidden');
                 alertCard.className = "p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900";
                 alertCard.innerHTML = `<p class="text-xs">Terjadi kendala koneksi ke server database. Silakan coba beberapa saat lagi.</p>`;
             } finally {
