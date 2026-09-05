@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pendaftaran Akun - PT Padepokan Tujuh Sembilan</title>
+    
+    <!-- FAVICON (Ikon Tab Browser) -->
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style> body { font-family: 'Inter', sans-serif; } </style>
@@ -94,7 +98,7 @@
 
     <!-- Skrip Validasi Pendaftaran Akun -->
     <script>
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxs1EXzCEjTVNjTeir1IWV3CNZGYyGbpR1kASVN78P6NnMZ9txF9pmr6umRq9muxnkLEQ/exec';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwl3XVVFBLzNNnNvfBX2WoWnJtRcT-VmUQ_bcAKAyIFqBft9AcgUNrTOWhRgmv_yQ4Z7w/exec';
 
         document.getElementById('registerForm').addEventListener('submit', async function(e) {
             e.preventDefault();
@@ -111,43 +115,44 @@
             alertContainer.classList.add('hidden');
 
             try {
-                const response = await fetch(`${SCRIPT_URL}?action=checkStatus&email=${encodeURIComponent(emailInput)}`);
+                const response = await fetch(`${SCRIPT_URL}?email=${encodeURIComponent(emailInput)}`, {
+                    method: 'GET'
+                });
                 const result = await response.json();
                 alertContainer.classList.remove('hidden');
 
                 if (result.status === "success") {
-                    const candidateData = result.data;
-                    const statusVal = candidateData.status || "Under Review";
+                    const statusVal = result.bgc_status || "Under Review";
                     const isCompleted = statusVal.toLowerCase().includes("completed");
 
                     if (isCompleted) {
                         alertCard.className = "p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900";
                         alertCard.innerHTML = `
-                            <p class="font-bold mb-1">✔ Pendaftaran Berhasil!</p>
-                            <p class="text-xs mb-3">Akun untuk <b>${candidateData.email}</b> berhasil dibuat. Anda sekarang bisa langsung masuk ke portal kandidat.</p>
-                            <a href="dashboard.html" onclick="localStorage.setItem('p79_candidate_status', 'passed');" class="inline-block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg transition text-sm shadow-sm">
-                                Masuk ke Portal Kandidat &rarr;
+                            <p class="font-bold mb-1">✔ Pendaftaran Akun Berhasil!</p>
+                            <p class="text-xs mb-3">Halo <b>${result.nama}</b>, akun untuk <b>${result.email}</b> berhasil divalidasi. Silakan masuk ke dashboard.</p>
+                            <a href="dashboard.html" class="inline-block w-full text-center bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2 rounded-lg transition text-sm shadow-sm">
+                                Masuk ke Dashboard &rarr;
                             </a>
                         `;
                         document.getElementById('registerForm').reset();
                     } else {
                         alertCard.className = "p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900";
                         alertCard.innerHTML = `
-                            <p class="font-bold mb-1">⚠ Belum Dapat Mendaftar</p>
-                            <p>Status Reference Check Anda saat ini adalah <b>"${statusVal}"</b>. Pendaftaran akun hanya dapat dilakukan jika status Anda sudah <b>Completed</b>.</p>
+                            <p class="font-bold mb-1">⚠ Status Belum Completed</p>
+                            <p class="text-xs">Halo <b>${result.nama}</b>, status Reference Check Anda saat ini <b>"${statusVal}"</b>. Pendaftaran akun baru bisa dilakukan jika status sudah <b>Completed</b>.</p>
                         `;
                     }
                 } else {
                     alertCard.className = "p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900";
                     alertCard.innerHTML = `
                         <p class="font-bold mb-1">✖ Email Tidak Ditemukan</p>
-                        <p>Email <b>${emailInput}</b> tidak terdaftar dalam data rekrutmen Reference Check.</p>
+                        <p class="text-xs">${result.message || "Email belum terdaftar dalam database."}</p>
                     `;
                 }
             } catch (error) {
                 alertContainer.classList.remove('hidden');
                 alertCard.className = "p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-900";
-                alertCard.innerHTML = `<p>Terjadi kendala koneksi ke server. Silakan coba beberapa saat lagi.</p>`;
+                alertCard.innerHTML = `<p class="text-xs">Terjadi kendala koneksi ke server database. Silakan coba beberapa saat lagi.</p>`;
             } finally {
                 btn.innerText = "Daftar Akun Sekarang";
                 btn.disabled = false;
